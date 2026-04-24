@@ -146,9 +146,9 @@ class ConnectFourAI {
             
             this.init_ai();
             
-            // Load book and cache via fetch from jsDelivr CDN (GitHub Releases with CORS) and pass to WASM memory
+            // Load book and cache from local files (now in repository with LFS)
             try {
-                const bookResponse = await fetch('https://cdn.jsdelivr.net/gh/mark957184/Connect-4@Connect-4/7x6.book');
+                const bookResponse = await fetch('7x6.book');
                 if (bookResponse.ok) {
                     const bookData = await bookResponse.arrayBuffer();
                     const bookDataArray = new Uint8Array(bookData);
@@ -168,7 +168,7 @@ class ConnectFourAI {
             }
             
             try {
-                const cacheResponse = await fetch('https://cdn.jsdelivr.net/gh/mark957184/Connect-4@Connect-4/opening_override.bin');
+                const cacheResponse = await fetch('opening_override.bin');
                 if (cacheResponse.ok) {
                     const cacheData = await cacheResponse.arrayBuffer();
                     const cacheDataArray = new Uint8Array(cacheData);
