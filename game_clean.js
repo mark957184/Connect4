@@ -146,6 +146,11 @@ class ConnectFourAI {
             
             this.init_ai();
             
+            // Wait for FS to be available
+            while (!Module.FS) {
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+            
             // Load book and cache using Emscripten FS API
             try {
                 const bookResponse = await fetch('7x6.book');
