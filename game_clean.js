@@ -157,38 +157,27 @@ class ConnectFourAI {
                 if (bookResponse.ok) {
                     const bookData = await bookResponse.arrayBuffer();
                     const bookDataArray = new Uint8Array(bookData);
-                    console.log('Book size:', bookDataArray.length);
                     const bookPtr = this.malloc(bookDataArray.length);
-                    console.log('Book ptr:', bookPtr);
                     // Try different heap access methods
                     if (Module.HEAP8) {
-                        console.log('Using HEAP8');
                         for (let i = 0; i < bookDataArray.length; i++) {
                             Module.HEAP8[bookPtr + i] = bookDataArray[i];
                         }
                     } else if (Module.HEAPU8) {
-                        console.log('Using HEAPU8');
                         for (let i = 0; i < bookDataArray.length; i++) {
                             Module.HEAPU8[bookPtr + i] = bookDataArray[i];
                         }
                     } else if (Module.wasmMemory) {
-                        console.log('Using wasmMemory');
                         const heap = new Int8Array(Module.wasmMemory.buffer);
                         for (let i = 0; i < bookDataArray.length; i++) {
                             heap[bookPtr + i] = bookDataArray[i];
                         }
-                    } else {
-                        console.log('No heap access method available!');
                     }
-                    const bookLoaded = this.load_book_from_memory(bookPtr, bookDataArray.length);
-                    console.log('Book load result:', bookLoaded);
+                    this.load_book_from_memory(bookPtr, bookDataArray.length);
                     this.free(bookPtr);
-                    console.log('Book loaded:', bookLoaded ? 'success' : 'failed');
-                } else {
-                    console.log('Book file not found');
                 }
             } catch (e) {
-                console.log('Failed to load book:', e);
+                // Book loading failed, AI will still work without it
             }
             
             // Load cache
@@ -196,38 +185,27 @@ class ConnectFourAI {
                 if (cacheResponse.ok) {
                     const cacheData = await cacheResponse.arrayBuffer();
                     const cacheDataArray = new Uint8Array(cacheData);
-                    console.log('Cache size:', cacheDataArray.length);
                     const cachePtr = this.malloc(cacheDataArray.length);
-                    console.log('Cache ptr:', cachePtr);
                     // Try different heap access methods
                     if (Module.HEAP8) {
-                        console.log('Using HEAP8 for cache');
                         for (let i = 0; i < cacheDataArray.length; i++) {
                             Module.HEAP8[cachePtr + i] = cacheDataArray[i];
                         }
                     } else if (Module.HEAPU8) {
-                        console.log('Using HEAPU8 for cache');
                         for (let i = 0; i < cacheDataArray.length; i++) {
                             Module.HEAPU8[cachePtr + i] = cacheDataArray[i];
                         }
                     } else if (Module.wasmMemory) {
-                        console.log('Using wasmMemory for cache');
                         const heap = new Int8Array(Module.wasmMemory.buffer);
                         for (let i = 0; i < cacheDataArray.length; i++) {
                             heap[cachePtr + i] = cacheDataArray[i];
                         }
-                    } else {
-                        console.log('No heap access method available for cache!');
                     }
-                    const cacheLoaded = this.load_cache_from_memory(cachePtr, cacheDataArray.length);
-                    console.log('Cache load result:', cacheLoaded);
+                    this.load_cache_from_memory(cachePtr, cacheDataArray.length);
                     this.free(cachePtr);
-                    console.log('Cache loaded:', cacheLoaded ? 'success' : 'failed');
-                } else {
-                    console.log('Cache file not found');
                 }
             } catch (e) {
-                console.log('Failed to load cache:', e);
+                // Cache loading failed, AI will still work without it
             }
             
             this.initialized = true;
