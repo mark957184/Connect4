@@ -146,20 +146,16 @@ class ConnectFourAI {
             
             this.init_ai();
             
-            // Load book and cache from local files (now in repository with LFS)
+            // Load book and cache using Emscripten FS API
             try {
                 const bookResponse = await fetch('7x6.book');
                 if (bookResponse.ok) {
                     const bookData = await bookResponse.arrayBuffer();
                     const bookDataArray = new Uint8Array(bookData);
-                    const bookPtr = this.malloc(bookDataArray.length);
-                    // Direct byte-by-byte copy using HEAP8
-                    const heap8 = new Int8Array(Module.HEAP8.buffer);
-                    for (let i = 0; i < bookDataArray.length; i++) {
-                        heap8[bookPtr + i] = bookDataArray[i];
-                    }
-                    const bookLoaded = this.load_book_from_memory(bookPtr, bookDataArray.length);
-                    this.free(bookPtr);
+                    // Write to virtual filesystem
+                    Module.FS.createDataFile('/', '7x6.book', bookDataArray, true, true, true);
+                    const bookLoaded = this.load_book('/7x6.book');
+                    Module.FS.unlink('/7x6.book');
                     console.log('Book loaded:', bookLoaded ? 'success' : 'failed');
                 } else {
                     console.log('Book file not found');
@@ -173,14 +169,10 @@ class ConnectFourAI {
                 if (cacheResponse.ok) {
                     const cacheData = await cacheResponse.arrayBuffer();
                     const cacheDataArray = new Uint8Array(cacheData);
-                    const cachePtr = this.malloc(cacheDataArray.length);
-                    // Direct byte-by-byte copy using HEAP8
-                    const heap8 = new Int8Array(Module.HEAP8.buffer);
-                    for (let i = 0; i < cacheDataArray.length; i++) {
-                        heap8[cachePtr + i] = cacheDataArray[i];
-                    }
-                    const cacheLoaded = this.load_cache_from_memory(cachePtr, cacheDataArray.length);
-                    this.free(cachePtr);
+                    // Write to virtual filesystem
+                    Module.FS.createDataFile('/', 'opening_override.bin', cacheDataArray, true, true, true);
+                    const cacheLoaded = this.load_cache('/opening_override.bin');
+                    Module.FS.unlink('/opening_override.bin');
                     console.log('Cache loaded:', cacheLoaded ? 'success' : 'failed');
                 } else {
                     console.log('Cache file not found');
