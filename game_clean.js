@@ -153,10 +153,11 @@ class ConnectFourAI {
                     const bookData = await bookResponse.arrayBuffer();
                     const bookDataArray = new Uint8Array(bookData);
                     const bookPtr = this.malloc(bookDataArray.length);
-                    // Simple byte-by-byte copy using HEAP8
-                    for (let i = 0; i < bookDataArray.length; i++) {
-                        Module.HEAP8[bookPtr + i] = bookDataArray[i];
-                    }
+                    // Use C++ copy function for reliability
+                    const srcPtr = this.malloc(bookDataArray.length);
+                    Module.HEAPU8.set(bookDataArray, srcPtr);
+                    this.copy_to_memory(bookPtr, srcPtr, bookDataArray.length);
+                    this.free(srcPtr);
                     const bookLoaded = this.load_book_from_memory(bookPtr, bookDataArray.length);
                     this.free(bookPtr);
                     console.log('Book loaded:', bookLoaded ? 'success' : 'failed');
@@ -173,10 +174,11 @@ class ConnectFourAI {
                     const cacheData = await cacheResponse.arrayBuffer();
                     const cacheDataArray = new Uint8Array(cacheData);
                     const cachePtr = this.malloc(cacheDataArray.length);
-                    // Simple byte-by-byte copy using HEAP8
-                    for (let i = 0; i < cacheDataArray.length; i++) {
-                        Module.HEAP8[cachePtr + i] = cacheDataArray[i];
-                    }
+                    // Use C++ copy function for reliability
+                    const srcPtr = this.malloc(cacheDataArray.length);
+                    Module.HEAPU8.set(cacheDataArray, srcPtr);
+                    this.copy_to_memory(cachePtr, srcPtr, cacheDataArray.length);
+                    this.free(srcPtr);
                     const cacheLoaded = this.load_cache_from_memory(cachePtr, cacheDataArray.length);
                     this.free(cachePtr);
                     console.log('Cache loaded:', cacheLoaded ? 'success' : 'failed');
