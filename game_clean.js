@@ -146,9 +146,14 @@ class ConnectFourAI {
             
             this.init_ai();
             
-            // Load book and cache with fallback methods
+            // Load book and cache in parallel for faster loading
+            const [bookResponse, cacheResponse] = await Promise.all([
+                fetch('7x6.book'),
+                fetch('opening_override.bin')
+            ]);
+            
+            // Load book
             try {
-                const bookResponse = await fetch('7x6.book');
                 if (bookResponse.ok) {
                     const bookData = await bookResponse.arrayBuffer();
                     const bookDataArray = new Uint8Array(bookData);
@@ -186,8 +191,8 @@ class ConnectFourAI {
                 console.log('Failed to load book:', e);
             }
             
+            // Load cache
             try {
-                const cacheResponse = await fetch('opening_override.bin');
                 if (cacheResponse.ok) {
                     const cacheData = await cacheResponse.arrayBuffer();
                     const cacheDataArray = new Uint8Array(cacheData);
