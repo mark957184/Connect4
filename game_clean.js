@@ -146,21 +146,30 @@ class ConnectFourAI {
             
             this.init_ai();
             
-            // Wait for FS to be available
-            while (!Module.FS) {
-                await new Promise(resolve => setTimeout(resolve, 10));
-            }
-            
-            // Load book and cache using Emscripten FS API
+            // Load book and cache with fallback methods
             try {
                 const bookResponse = await fetch('7x6.book');
                 if (bookResponse.ok) {
                     const bookData = await bookResponse.arrayBuffer();
                     const bookDataArray = new Uint8Array(bookData);
-                    // Write to virtual filesystem
-                    Module.FS.createDataFile('/', '7x6.book', bookDataArray, true, true, true);
-                    const bookLoaded = this.load_book('/7x6.book');
-                    Module.FS.unlink('/7x6.book');
+                    const bookPtr = this.malloc(bookDataArray.length);
+                    // Try different heap access methods
+                    if (Module.HEAP8) {
+                        for (let i = 0; i < bookDataArray.length; i++) {
+                            Module.HEAP8[bookPtr + i] = bookDataArray[i];
+                        }
+                    } else if (Module.HEAPU8) {
+                        for (let i = 0; i < bookDataArray.length; i++) {
+                            Module.HEAPU8[bookPtr + i] = bookDataArray[i];
+                        }
+                    } else if (Module.wasmMemory) {
+                        const heap = new Int8Array(Module.wasmMemory.buffer);
+                        for (let i = 0; i < bookDataArray.length; i++) {
+                            heap[bookPtr + i] = bookDataArray[i];
+                        }
+                    }
+                    const bookLoaded = this.load_book_from_memory(bookPtr, bookDataArray.length);
+                    this.free(bookPtr);
                     console.log('Book loaded:', bookLoaded ? 'success' : 'failed');
                 } else {
                     console.log('Book file not found');
@@ -174,10 +183,24 @@ class ConnectFourAI {
                 if (cacheResponse.ok) {
                     const cacheData = await cacheResponse.arrayBuffer();
                     const cacheDataArray = new Uint8Array(cacheData);
-                    // Write to virtual filesystem
-                    Module.FS.createDataFile('/', 'opening_override.bin', cacheDataArray, true, true, true);
-                    const cacheLoaded = this.load_cache('/opening_override.bin');
-                    Module.FS.unlink('/opening_override.bin');
+                    const cachePtr = this.malloc(cacheDataArray.length);
+                    // Try different heap access methods
+                    if (Module.HEAP8) {
+                        for (let i = 0; i < cacheDataArray.length; i++) {
+                            Module.HEAP8[cachePtr + i] = cacheDataArray[i];
+                        }
+                    } else if (Module.HEAPU8) {
+                        for (let i = 0; i < cacheDataArray.length; i++) {
+                            Module.HEAPU8[cachePtr + i] = cacheDataArray[i];
+                        }
+                    } else if (Module.wasmMemory) {
+                        const heap = new Int8Array(Module.wasmMemory.buffer);
+                        for (let i = 0; i < cacheDataArray.length; i++) {
+                            heap[cachePtr + i] = cacheDataArray[i];
+                        }
+                    }
+                    const cacheLoaded = this.load_cache_from_memory(cachePtr, cacheDataArray.length);
+                    this.free(cachePtr);
                     console.log('Cache loaded:', cacheLoaded ? 'success' : 'failed');
                 } else {
                     console.log('Cache file not found');
