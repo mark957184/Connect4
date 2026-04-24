@@ -153,11 +153,11 @@ class ConnectFourAI {
                     const bookData = await bookResponse.arrayBuffer();
                     const bookDataArray = new Uint8Array(bookData);
                     const bookPtr = this.malloc(bookDataArray.length);
-                    // Use C++ copy function for reliability
-                    const srcPtr = this.malloc(bookDataArray.length);
-                    Module.HEAPU8.set(bookDataArray, srcPtr);
-                    this.copy_to_memory(bookPtr, srcPtr, bookDataArray.length);
-                    this.free(srcPtr);
+                    // Direct byte-by-byte copy using HEAP8
+                    const heap8 = new Int8Array(Module.HEAP8.buffer);
+                    for (let i = 0; i < bookDataArray.length; i++) {
+                        heap8[bookPtr + i] = bookDataArray[i];
+                    }
                     const bookLoaded = this.load_book_from_memory(bookPtr, bookDataArray.length);
                     this.free(bookPtr);
                     console.log('Book loaded:', bookLoaded ? 'success' : 'failed');
@@ -174,11 +174,11 @@ class ConnectFourAI {
                     const cacheData = await cacheResponse.arrayBuffer();
                     const cacheDataArray = new Uint8Array(cacheData);
                     const cachePtr = this.malloc(cacheDataArray.length);
-                    // Use C++ copy function for reliability
-                    const srcPtr = this.malloc(cacheDataArray.length);
-                    Module.HEAPU8.set(cacheDataArray, srcPtr);
-                    this.copy_to_memory(cachePtr, srcPtr, cacheDataArray.length);
-                    this.free(srcPtr);
+                    // Direct byte-by-byte copy using HEAP8
+                    const heap8 = new Int8Array(Module.HEAP8.buffer);
+                    for (let i = 0; i < cacheDataArray.length; i++) {
+                        heap8[cachePtr + i] = cacheDataArray[i];
+                    }
                     const cacheLoaded = this.load_cache_from_memory(cachePtr, cacheDataArray.length);
                     this.free(cachePtr);
                     console.log('Cache loaded:', cacheLoaded ? 'success' : 'failed');
