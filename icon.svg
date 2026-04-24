@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" fill="#1a1a2e"/>
+  <circle cx="48" cy="48" r="24" fill="#ff4444"/>
+  <circle cx="96" cy="48" r="24" fill="#ffcc00"/>
+  <circle cx="144" cy="48" r="24" fill="#ff4444"/>
+  <circle cx="48" cy="96" r="24" fill="#ffcc00"/>
+  <circle cx="96" cy="96" r="24" fill="#ff4444"/>
+  <circle cx="144" cy="96" r="24" fill="#ffcc00"/>
+  <circle cx="48" cy="144" r="24" fill="#ff4444"/>
+  <circle cx="96" cy="144" r="24" fill="#ffcc00"/>
+  <circle cx="144" cy="144" r="24" fill="#ff4444"/>
+  <text x="96" y="180" text-anchor="middle" fill="white" font-size="16" font-family="Arial">Connect4</text>
+</svg>

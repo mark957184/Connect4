@@ -1,0 +1,2 @@
+7x6.book filter=lfs diff=lfs merge=lfs -text
+opening_override.bin filter=lfs diff=lfs merge=lfs -text
