@@ -128,7 +128,8 @@ class ConnectFourAI {
                 }
             });
             
-            this.init_ai = Module.cwrap('init_ai', 'void', []);
+            this.malloc = Module.cwrap('malloc', 'number', ['number']);
+            this.free = Module.cwrap('free', 'void', ['number']);
             this.load_book = Module.cwrap('load_book', 'number', ['string']);
             this.load_book_from_memory = Module.cwrap('load_book_from_memory', 'number', ['number', 'number']);
             this.load_cache = Module.cwrap('load_cache', 'number', ['string']);
@@ -136,13 +137,12 @@ class ConnectFourAI {
             this.copy_to_memory = Module.cwrap('copy_to_memory', 'void', ['number', 'number', 'number']);
             this.save_cache = Module.cwrap('save_cache', 'number', ['string']);
             this.reset_game = Module.cwrap('reset_game', 'void', []);
+            this.init_ai = Module.cwrap('init_ai', 'void', []);
             this.play_move = Module.cwrap('play_move', 'number', ['number']);
             this.get_cell = Module.cwrap('get_cell', 'number', ['number', 'number']);
             this.is_game_over = Module.cwrap('is_game_over', 'number', []);
             this.get_winner = Module.cwrap('get_winner', 'number', []);
             this.get_best_move = Module.cwrap('get_best_move', 'number', ['number', 'number', 'number', 'number', 'number', 'number', 'number']);
-            this.malloc = Module.cwrap('malloc', 'number', ['number']);
-            this.free = Module.cwrap('free', 'void', ['number']);
             
             this.init_ai();
             
