@@ -143,7 +143,6 @@ class ConnectFourAI {
             this.get_best_move = Module.cwrap('get_best_move', 'number', ['number', 'number', 'number', 'number', 'number', 'number', 'number']);
             this.malloc = Module.cwrap('malloc', 'number', ['number']);
             this.free = Module.cwrap('free', 'void', ['number']);
-            this.save_cache_to_memory = Module.cwrap('save_cache_to_memory', 'number', ['number', 'number']);
             
             this.init_ai();
             
@@ -232,36 +231,6 @@ class ConnectFourAI {
         
         return this.get_best_move(pos1Low, pos1High, pos2Low, pos2High, maskLow, maskHigh, moves);
     }
-
-    downloadCache() {
-        if (!this.initialized) return;
-        
-        // Allocate buffer for cache (max 1MB should be enough)
-        const bufferSize = 1024 * 1024;
-        const bufferPtr = this.malloc(bufferSize);
-        
-        // Save cache to memory
-        const size = this.save_cache_to_memory(bufferPtr, bufferSize);
-        
-        if (size > 0) {
-            // Copy data from WASM memory
-            const data = new Uint8Array(size);
-            for (let i = 0; i < size; i++) {
-                data[i] = Module.HEAP8[bufferPtr + i];
-            }
-            
-            // Create download
-            const blob = new Blob([data], { type: 'application/octet-stream' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'opening_override.bin';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-        
-        this.free(bufferPtr);
-    }
 }
 
 // UI Controller
@@ -290,14 +259,12 @@ class GameController {
         this.turnInfo = document.getElementById('turn-info');
         this.newGameBtn = document.getElementById('new-game-btn');
         this.orderBtn = document.getElementById('order-btn');
-        this.downloadCacheBtn = document.getElementById('download-cache-btn');
         
         this.createBoard();
         this.createColumnButtons();
         
         this.newGameBtn.addEventListener('click', () => this.newGame());
         this.orderBtn.addEventListener('click', () => this.toggleOrder());
-        this.downloadCacheBtn.addEventListener('click', () => this.ai.downloadCache());
     }
 
     createBoard() {
