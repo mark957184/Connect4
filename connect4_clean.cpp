@@ -613,6 +613,32 @@ extern "C" {
         return save_persistent_override(path) ? 1 : 0;
     }
     
+    int save_cache_to_memory(uint8_t* buffer, size_t buffer_size) {
+        const uint32_t magic = 0x34434643u;
+        const uint32_t version = 1u;
+        const uint64_t count = (uint64_t)g_opening_override.size();
+        const size_t required_size = 16 + count * 9;
+        
+        if (buffer_size < required_size) return 0;
+        
+        uint8_t* p = buffer;
+        *(uint32_t*)p = magic; p += 4;
+        *(uint32_t*)p = version; p += 4;
+        *(uint64_t*)p = count; p += 8;
+        
+        for (const auto &kv : g_opening_override) {
+            uint64_t k = kv.first;
+            int vv = kv.second;
+            if (vv < -64) vv = -64;
+            if (vv > 63) vv = 63;
+            int8_t v = (int8_t)vv;
+            *(uint64_t*)p = k; p += 8;
+            *(int8_t*)p = v; p += 1;
+        }
+        
+        return (int)required_size;
+    }
+    
     void reset_game() {
         g_game.reset();
         g_tt.clear();

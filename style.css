@@ -122,7 +122,17 @@ h1 {
 }
 
 #order-btn:hover {
-    background: #1976D2;
+    background: #0b7dda;
+    transform: translateY(-2px);
+}
+
+#download-cache-btn {
+    background: #FF9800;
+    color: white;
+}
+
+#download-cache-btn:hover {
+    background: #e68900;
     transform: translateY(-2px);
 }
 
