@@ -130,18 +130,20 @@ h1 {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 5px;
+    margin-top: 15px;
 }
 
 .column-btn {
-    padding: 20px 5px;
-    font-size: 2em;
+    padding: 12px 5px;
+    font-size: 1.2em;
     font-weight: bold;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
     background: #3a3a5a;
     color: white;
+    aspect-ratio: 1;
 }
 
 .column-btn:hover {
