@@ -126,19 +126,6 @@ h1 {
     transform: translateY(-2px);
 }
 
-#download-cache-btn {
-    background: #FF9800;
-    color: white;
-}
-
-#download-cache-btn:hover {
-    background: #e68900;
-    transform: translateY(-2px);
-}
-    background: #1976D2;
-    transform: translateY(-2px);
-}
-
 .column-buttons {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -147,7 +134,7 @@ h1 {
 
 .column-btn {
     padding: 15px 5px;
-    font-size: 1.2em;
+    font-size: 1.5em;
     font-weight: bold;
     border: none;
     border-radius: 10px;
